@@ -4,8 +4,11 @@ import numpy as np
 
 
 # TODO: load dataset
+data=np.load('../cullpdb+profile_6133_filtered.npy.gz')
 
-
+# Parameters
+training_epochs=10
+batch_size=100
 
 # Network Parameters
 n_input = 22 # MNIST data input (img shape: 28*28)
@@ -22,6 +25,10 @@ n_hidden_2 = 128
 
 
 n_classes = 9 # 8 secondary structure classes and a 'noseq' class
+
+# input formatting
+all_x=data[:,0:22]
+all_y=data[:,22:31]
 
 
 # tf Graph input
@@ -114,28 +121,28 @@ init = tf.global_variables_initializer()
 # Launch the graph
 with tf.Session() as sess:
     sess.run(init)
-    step = 1
     # Keep training until reach max iterations
-    while step * batch_size < training_iters:
 
-        #### load data ####
+    for epoch in range(training_epochs):
+        total_batch=int(len(data)/batch_size)
+        for i in  range(total_batch):
+            #### load data ####
+            batch_x=all_x[batch_size*i:batch_size*(i+1)]
+            batch_y=all_y[batch_size*i:batch_size*(i+1)]
+            # Reshape data to get 28 seq of 28 elements
+            batch_x = batch_x.reshape((batch_size, n_steps, n_input))
+            # Run optimization op (backprop)
+            sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
 
-        batch_x, batch_y = 
-        # Reshape data to get 28 seq of 28 elements
-        batch_x = batch_x.reshape((batch_size, n_steps, n_input))
-        # Run optimization op (backprop)
-        sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
-
-        if step % display_step == 0:
-            # Calculate batch accuracy
-            acc = sess.run(accuracy, feed_dict={x: batch_x, y: batch_y})
-            # Calculate batch loss
-            loss = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
-            ##print "Iter " + str(step*batch_size) + ", Minibatch Loss= " + \
-            ##      "{:.6f}".format(loss) + ", Training Accuracy= " + \
-            ##      "{:.5f}".format(acc)
-        step += 1
-    print "Optimization Finished!"
+            if step % display_step == 0:
+                # Calculate batch accuracy
+                acc = sess.run(accuracy, feed_dict={x: batch_x, y: batch_y})
+                # Calculate batch loss
+                loss = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
+                print ("Iter " + str(step*batch_size) + ", Minibatch Loss= " + \
+                      "{:.6f}".format(loss) + ", Training Accuracy= " + \
+                      "{:.5f}".format(acc))
+    print ("Optimization Finished!")
 
     ####TODO，test set accuracy
 
