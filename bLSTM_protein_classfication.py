@@ -56,7 +56,7 @@ def multilayer_NN(x, weights, biases):
     out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
     return out_layer
 
-def BiLSTM_feedforward(x, weights, biases):
+def BiLSTM(x, weights, biases):
 
     # Prepare data shape to match `bidirectional_rnn` function requirements
     # Current data input shape: (batch_size, n_steps, n_input)
@@ -90,9 +90,9 @@ def BiLSTM_feedforward(x, weights, biases):
     # Linear activation, using rnn inner loop last output
     return tf.matmul(outputs[-1], weights['out']) + biases['out']
 
-lstm_out = BiLSTM_feedforward(x, weights, biases)
+lstm_out = BiLSTM(x, weights, biases)
 
-pred = multilayer_NN(lstm_out, weights, biases);
+pred = multilayer_NN(lstm_out, weights, biases)
 
 # Define loss and optimizer
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
@@ -131,12 +131,14 @@ with tf.Session() as sess:
         step += 1
     print "Optimization Finished!"
 
+    ####TODO，test set accuracy
+
     # Calculate accuracy for 128 mnist test images
-    test_len = 128
-    test_data = mnist.test.images[:test_len].reshape((-1, n_steps, n_input))
-    test_label = mnist.test.labels[:test_len]
-    print "Testing Accuracy:", \
-        sess.run(accuracy, feed_dict={x: test_data, y: test_label})
+    # test_len = 128
+    # test_data = mnist.test.images[:test_len].reshape((-1, n_steps, n_input))
+    # test_label = mnist.test.labels[:test_len]
+    # print "Testing Accuracy:", \
+    #     sess.run(accuracy, feed_dict={x: test_data, y: test_label})
 
 
 
