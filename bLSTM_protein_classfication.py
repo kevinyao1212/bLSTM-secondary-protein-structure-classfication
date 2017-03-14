@@ -28,6 +28,8 @@ n_classes = 9 # 8 secondary structure classes and a 'noseq' class
 x = tf.placeholder("float", [None, n_steps, n_input])
 y = tf.placeholder("float", [None, n_classes])
 
+lstm_out = tf.placeholder("float", [None, n_classes] )
+
 # Define weights
 weights = {
     # Hidden layer weights => 2*n_hidden because of foward + backward cells
@@ -45,12 +47,16 @@ biases = {
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
 
-def multilayer_NN(x, weights, biases):
+## could be a benchmark, use a NN or just output bLSTM
+## or maybe try different structure here like CNN 
+##
+##
+def multilayer_NN(lstm_out, weights, biases):
     # Hidden layer with RELU activation
-    layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
+    layer_1 = tf.add(tf.matmul(lstm_out, weights['h1']), biases['b1'])
     layer_1 = tf.nn.sigmoid(layer_1)
     
-    layer_2 = tf.add(tf.matmul(x, weights['h2']), biases['b2'])
+    layer_2 = tf.add(tf.matmul(lstm_out, weights['h2']), biases['b2'])
     layer_2 = tf.nn.sigmoid(layer_2)
     # Output layer with linear activation
     out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
@@ -88,7 +94,7 @@ def BiLSTM(x, weights, biases):
 
 
     # Linear activation, using rnn inner loop last output
-    return tf.matmul(outputs[-1], weights['out']) + biases['out']
+    return tf.matmul(outputs[-1], weights['blstm_out']) + biases['out']
 
 lstm_out = BiLSTM(x, weights, biases)
 
@@ -125,9 +131,9 @@ with tf.Session() as sess:
             acc = sess.run(accuracy, feed_dict={x: batch_x, y: batch_y})
             # Calculate batch loss
             loss = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
-            print "Iter " + str(step*batch_size) + ", Minibatch Loss= " + \
-                  "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.5f}".format(acc)
+            ##print "Iter " + str(step*batch_size) + ", Minibatch Loss= " + \
+            ##      "{:.6f}".format(loss) + ", Training Accuracy= " + \
+            ##      "{:.5f}".format(acc)
         step += 1
     print "Optimization Finished!"
 
