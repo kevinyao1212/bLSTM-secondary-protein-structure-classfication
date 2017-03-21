@@ -27,9 +27,11 @@ n_hidden_2 = 128
 n_classes = 9 # 8 secondary structure classes and a 'noseq' class
 
 # input formatting
-all_x=data[:,0:22]
-all_y=data[:,22:31]
-
+#all_x=data[:,0:22]
+#all_y=data[:,22:31]
+data.shape=(5534,700,57)
+all_x=data[:,:,0:22]
+all_y=data[:,:,22:31]
 
 # tf Graph input
 x = tf.placeholder("float", [None, n_steps, n_input])
@@ -80,7 +82,7 @@ def BiLSTM(x, weights, biases):
     # Reshape to (n_steps*batch_size, n_input)
     x = tf.reshape(x, [-1, n_input])
     # Split to get a list of 'n_steps' tensors of shape (batch_size, n_input)
-    x = tf.split(x, n_steps, 0)
+    x = tf.split(x, int(n_steps), 0)
 
     # Define lstm cells with tensorflow
     # Forward direction cell
@@ -130,7 +132,7 @@ with tf.Session() as sess:
             batch_x=all_x[batch_size*i:batch_size*(i+1)]
             batch_y=all_y[batch_size*i:batch_size*(i+1)]
             # Reshape data to get 28 seq of 28 elements
-            batch_x = batch_x.reshape((batch_size, n_steps, n_input))
+            #batch_x = batch_x.reshape((batch_size, n_steps, n_input))
             # Run optimization op (backprop)
             sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
 
