@@ -65,7 +65,7 @@ def multilayer_NN(lstm_out, weights, biases):
     layer_1 = tf.add(tf.matmul(lstm_out, weights['h1']), biases['b1'])
     layer_1 = tf.nn.sigmoid(layer_1)
     
-    layer_2 = tf.add(tf.matmul(lstm_out, weights['h2']), biases['b2'])
+    layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
     layer_2 = tf.nn.sigmoid(layer_2)
     # Output layer with linear activation
     out_layer = tf.matmul(layer_2, weights['out']) + biases['out']
