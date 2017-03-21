@@ -45,60 +45,61 @@ print("Experiment id: %s" % experiment_id)
 
 
 
-def main():
-    num_epochs = config.epochs
-    batch_size = config.batch_size
+#def main():
+num_epochs = config.epochs
+batch_size = config.batch_size
 
-    l_out = config.build_model()
+l_out = config.build_model(config.x,config.weights,config.biases)
 
-    # Define loss and optimizer
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=l_out, labels=config.y))
+# Define loss and optimizer
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=l_out, labels=config.y))
 
 
-    # Evaluate model
-    correct_pred = tf.equal(tf.argmax(l_out, 1), tf.argmax(config.y, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+# Evaluate model
+correct_pred = tf.equal(tf.argmax(l_out, 1), tf.argmax(config.y, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
-    # Initializing the variables
-    init = tf.global_variables_initializer()
+# Initializing the variables
+init = tf.global_variables_initializer()
 
-    if opt == "rmsprop":
-        optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)
-    # elif optimizer == "adadelta":
-    #
-    # elif optimizer == "adagrad":
-    #
-    # elif optimizer == "nag":
+if opt == "rmsprop":
+    optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)
+# elif optimizer == "adadelta":
+#
+# elif optimizer == "adagrad":
+#
+# elif optimizer == "nag":
 
-    else:
-        sys.exit("please choose either <rmsprop/adagrad/adadelta/nag> in configfile")
+else:
+    sys.exit("please choose either <rmsprop/adagrad/adadelta/nag> in configfile")
 
-    #import data
-    #X_train, X_valid, y_train, y_valid, mask_train, mask_valid, num_seq_train = data.get_train()
+#import data
+#X_train, X_valid, y_train, y_valid, mask_train, mask_valid, num_seq_train = data.get_train()
 
-    init = tf.global_variables_initializer()
+init = tf.global_variables_initializer()
 
-    with tf.Session() as sess:
-        sess.run(init)
-        # Keep training until reach max iterations
+with tf.Session() as sess:
+    sess.run(init)
+    # Keep training until reach max iterations
 
-        for epoch in range(config.epochs):
-            total_batch = int(len(X) / batch_size)
-            for i in range(total_batch):
-                #### load data ####
-                batch_x = X[batch_size * i:batch_size * (i + 1)]
-                batch_y = labels[batch_size * i:batch_size * (i + 1)]
-                # Reshape data to get 28 seq of 28 elements
-                # batch_x = batch_x.reshape((batch_size, n_steps, n_input))
-                # Run optimization op (backprop)
-                sess.run(optimizer, feed_dict={config.x: batch_x, config.y: batch_y})
+    for epoch in range(config.epochs):
+        total_batch = int(len(X) / batch_size)
+        for i in range(total_batch):
+            print(i)
+            #### load data ####
+            batch_x = X[batch_size * i:batch_size * (i + 1)]
+            batch_y = labels[batch_size * i:batch_size * (i + 1)]
+            # Reshape data to get 28 seq of 28 elements
+            # batch_x = batch_x.reshape((batch_size, n_steps, n_input))
+            # Run optimization op (backprop)
+            sess.run(optimizer, feed_dict={config.x: batch_x, config.y: batch_y})
 
-                if i % display_step == 0:
-                    # Calculate batch accuracy
-                    acc = sess.run(accuracy, feed_dict={config.x: batch_x, config.y: batch_y})
-                    # Calculate batch loss
-                    loss = sess.run(cost, feed_dict={config.x: batch_x, config.y: batch_y})
-                    print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
-                          "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                          "{:.5f}".format(acc))
-        print("Optimization Finished!")
+            if i % display_step == 0:
+                # Calculate batch accuracy
+                acc = sess.run(accuracy, feed_dict={config.x: batch_x, config.y: batch_y})
+                # Calculate batch loss
+                loss = sess.run(cost, feed_dict={config.x: batch_x, config.y: batch_y})
+                print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
+                      "{:.6f}".format(loss) + ", Training Accuracy= " + \
+                      "{:.5f}".format(acc))
+    print("Optimization Finished!")
