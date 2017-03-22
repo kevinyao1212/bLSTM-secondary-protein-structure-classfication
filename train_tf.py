@@ -97,9 +97,12 @@ with tf.Session() as sess:
             acc,loss = sess.run([accuracy,cost], feed_dict={config.x: batch_x, config.y: batch_y})
             # Calculate batch loss
             #loss = sess.run(cost, feed_dict={config.x: batch_x, config.y: batch_y})
+
             print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
+            if( loss < 0.5 ):
+                break
 	    
     print("Optimization Finished!")
 
@@ -138,5 +141,5 @@ with tf.Session() as sess:
     #acc/=int(514/config.batch_size)
 
     print(acc)
-    acc=acc/(514*700-count)
+    acc=acc/(512*700-count)
     print("test accuracy = "+str(acc))
