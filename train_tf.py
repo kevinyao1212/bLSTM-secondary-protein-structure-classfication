@@ -6,8 +6,10 @@ from datetime import datetime, timedelta
 import importlib
 import time
 import pickle
+import gzip
 
-X_in=np.load('../cullpdb+profile_6133_filtered.npy.gz')
+f=gzip.open('../cullpdb+profile_6133_filtered.npy.gz','rb')
+X_in=np.load(f)
 
 X = np.reshape(X_in,(5534,700,57))
 del X_in
@@ -83,7 +85,7 @@ with tf.Session() as sess:
     for epoch in range(config.epochs):
         total_batch = int(len(X) / batch_size)
         for i in range(total_batch):
-            if (i==10):
+            if (i==1):
                 break
             #### load data ####
             batch_x = X[batch_size * i:batch_size * (i + 1)]
@@ -104,12 +106,19 @@ with tf.Session() as sess:
     print("Optimization Finished!")
 
     #Test accuracy
-    test=np.load("../cb513+profile_split1.npy.gz")
+    f=gzip.open('../cb513+profile_split1.npy.gz','rb')
+    test=np.load(f)
     test.shape=(514,700,57)
     labels = test[:,:,22:31]
     a = np.arange(0,21)
     b = np.arange(35,56)
     c = np.hstack((a,b))
     X = test[:,:,c]
-    acc=sess.run(accuracy,feed_dict={config.x:X, config.y:labels})
+    acc
+    for i in range(int(514/config.batch_size)):
+        batch_x = X[batch_size * i:batch_size * (i + 1)]
+        batch_y = labels[batch_size * i:batch_size * (i + 1)]
+        acc+=sess.run(accuracy,feed_dict={config.x:batch_x, config.y:batch_y})
+        #acc=accuracy.eval({config.x:X, config.y:labels})
+    acc/=int(514/config.batch_size)
     print("test accuracy = "+str(acc))
