@@ -7,6 +7,7 @@ import importlib
 import time
 import pickle
 import gzip
+from tempfile import TemporaryFile
 
 f=gzip.open('../cullpdb+profile_6133_filtered.npy.gz','rb')
 X_in=np.load(f)
@@ -72,10 +73,23 @@ if opt == "rmsprop":
 else:
     sys.exit("please choose either <rmsprop/adagrad/adadelta/nag> in configfile")
 
-#import data
-#X_train, X_valid, y_train, y_valid, mask_train, mask_valid, num_seq_train = data.get_train()
+f=gzip.open('../cb513+profile_split1.npy.gz','rb')
+test=np.load(f)
+test.shape=(514,700,57)
+labelsTest = test[:,:,22:31]
+a = np.arange(0,22)
+b = np.arange(35,56)
+c = np.hstack((a,b))
+XTest = test[:,:,c]
+count=0
+for i in range(512):
+    for j in range(700):
+        if (XTest[i,j,21]==1):
+            count+=1
 
 init = tf.global_variables_initializer()
+
+target=open("xyz.txt","w")
 
 with tf.Session() as sess:
     sess.run(init)
@@ -90,56 +104,35 @@ with tf.Session() as sess:
             # Reshape data to get 28 seq of 28 elements
             # batch_x = batch_x.reshape((batch_size, n_steps, n_input))
             # Run optimization op (backprop)
-            sess.run(optimizer, feed_dict={config.x: batch_x, config.y: batch_y})
+            _,loss=sess.run([optimizer,cost], feed_dict={config.x: batch_x, config.y: batch_y})
 
             #if i % display_step == 0:
             # Calculate batch accuracy
-            acc,loss = sess.run([accuracy,cost], feed_dict={config.x: batch_x, config.y: batch_y})
+            #acc,loss = sess.run([accuracy,cost], feed_dict={config.x: batch_x, config.y: batch_y})
             # Calculate batch loss
             #loss = sess.run(cost, feed_dict={config.x: batch_x, config.y: batch_y})
 
             print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
-                  "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.5f}".format(acc))
-            if( loss < 0.5 ):
-                break
+                  "{:.6f}".format(loss))
+        #Test accuracy
+        acc = 0
+        for i in range(int(514/config.batch_size)):
+            batch_x = XTest[batch_size * i:batch_size * (i + 1)]
+            batch_y = labelsTest[batch_size * i:batch_size * (i + 1)]
+            prediction=tf.argmax(l_out,2)
+            res=prediction.eval(feed_dict={config.x:batch_x, config.y:batch_y})
+            for j in range(config.batch_size):
+                for k in range(config.seq_len):
+                    if (batch_y[j,k,8]==1):
+                        continue
+                    if (np.argmax(batch_y[j,k,:])==res[j,k]):
+                        acc+=1
+
+        acc=acc/(512*700-count)
+        print("test accuracy = "+str(acc))
+        target.write(str(epoch)+" "+str(acc))
+        target.write("\n")
+        target.flush()
 	    
     print("Optimization Finished!")
-
-
-    #Test accuracy
-    f=gzip.open('../cb513+profile_split1.npy.gz','rb')
-    test=np.load(f)
-    test.shape=(514,700,57)
-    labels = test[:,:,22:31]
-    a = np.arange(0,22)
-    b = np.arange(35,56)
-    c = np.hstack((a,b))
-    X = test[:,:,c]
-    count=0
-    for i in range(514):
-        for j in range(700):
-            if (X[i,j,21]==1):
-                count+=1
-    print(count)
-    acc = 0
-    for i in range(int(514/config.batch_size)):
-        batch_x = X[batch_size * i:batch_size * (i + 1)]
-        batch_y = labels[batch_size * i:batch_size * (i + 1)]
-        prediction=tf.argmax(l_out,2)
-        res=prediction.eval(feed_dict={config.x:batch_x, config.y:batch_y})
-        #best=sess.run([prediction],)
-        print(res.shape)
-        for j in range(config.batch_size):
-            for k in range(config.seq_len):
-                if (batch_y[j,k,8]==1):
-                    continue
-                if (np.argmax(batch_y[j,k,:])==res[j,k]):
-                    acc+=1
-        #acc+=sess.run(accuracy,feed_dict={config.x:batch_x, config.y:batch_y})
-        #acc=accuracy.eval({config.x:X, config.y:labels})
-    #acc/=int(514/config.batch_size)
-
-    print(acc)
-    acc=acc/(512*700-count)
-    print("test accuracy = "+str(acc))
+target.close()
