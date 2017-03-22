@@ -17,7 +17,7 @@ X = X[:,:,:]
 labels = X[:,:,22:31]
 #mask = X[:,:,30] * -1 + 1
 
-a = np.arange(0,21)
+a = np.arange(0,22)
 b = np.arange(35,56)
 c = np.hstack((a,b))
 X = X[:,:,c]
@@ -31,9 +31,11 @@ if len(sys.argv) != 2:
     sys.exit("Usage: python train.py <config_name>")
 
 config_name = sys.argv[1]
+test_name=config_name+"_test"
 
 #config_name = "lstm_uni_20"
 config = importlib.import_module("configurations.%s" % config_name)
+test=importlib.import_module("configurations.%s" % test_name)
 opt = config.optimizer
 print("Using configurations: '%s'" % config_name)
 
@@ -103,22 +105,40 @@ with tf.Session() as sess:
             print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
+	    
     print("Optimization Finished!")
 
+
     #Test accuracy
+    l_out = test.build_model(test.x,test.weights,test.biases)
+
+    # Define loss and optimizer
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=l_out, labels=test.y))
+
+    # Evaluate model
+    correct_pred = tf.equal(tf.argmax(l_out, 2), tf.argmax(test.y, 2))
+    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
     f=gzip.open('../cb513+profile_split1.npy.gz','rb')
     test=np.load(f)
     test.shape=(514,700,57)
-    labels = test[:,:,22:31]
-    a = np.arange(0,21)
+    labels = test[:,:,22:30]
+    a = np.arange(0,22)
     b = np.arange(35,56)
     c = np.hstack((a,b))
     X = test[:,:,c]
-    acc
-    for i in range(int(514/config.batch_size)):
+    count=0
+    for i in range(514):
+        for j in range(700):
+            if (X[i,j,21]==1):
+                count+=1
+    print(count)
+    acc = 0
+    for i in range(int(514/test.batch_size)):
         batch_x = X[batch_size * i:batch_size * (i + 1)]
         batch_y = labels[batch_size * i:batch_size * (i + 1)]
-        acc+=sess.run(accuracy,feed_dict={config.x:batch_x, config.y:batch_y})
+        acc+=sess.run(accuracy,feed_dict={test.x:batch_x, test.y:batch_y})
         #acc=accuracy.eval({config.x:X, config.y:labels})
-    acc/=int(514/config.batch_size)
+    acc/=int(514/test.batch_size)
+    acc=(514*700*acc)/(514*700-count)
     print("test accuracy = "+str(acc))

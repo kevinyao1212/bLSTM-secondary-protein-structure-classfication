@@ -15,7 +15,7 @@ N_LSTM_F = 400
 N_LSTM_B = 400
 N_L2 = 200
 n_inputs = 43
-n_classes = 9
+n_classes = 8
 seq_len = 700
 optimizer = "rmsprop"
 lambda_reg = 0.0001
@@ -64,4 +64,5 @@ def build_model(x, weights, biases):
     output_layer=tf.reshape(output_layer,[batch_size,seq_len,n_classes])
 
     return output_layer
+
 
