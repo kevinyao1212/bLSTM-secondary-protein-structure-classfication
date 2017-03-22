@@ -12,7 +12,7 @@ X_in=np.load('../cullpdb+profile_6133_filtered.npy.gz')
 X = np.reshape(X_in,(5534,700,57))
 del X_in
 X = X[:,:,:]
-labels = X[:,:,22:30]
+labels = X[:,:,22:31]
 #mask = X[:,:,30] * -1 + 1
 
 a = np.arange(0,21)
@@ -22,8 +22,6 @@ X = X[:,:,c]
 
 learning_rate = 0.001
 display_step = 50
-
-num_classes = 8
 
 np.random.seed(1)
 
@@ -56,7 +54,7 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=l_out, labe
 
 
 # Evaluate model
-correct_pred = tf.equal(tf.argmax(l_out, 1), tf.argmax(config.y, 1))
+correct_pred = tf.equal(tf.argmax(l_out, 2), tf.argmax(config.y, 2))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 # Initializing the variables
@@ -85,7 +83,8 @@ with tf.Session() as sess:
     for epoch in range(config.epochs):
         total_batch = int(len(X) / batch_size)
         for i in range(total_batch):
-            print(i)
+            if (i==10):
+                break
             #### load data ####
             batch_x = X[batch_size * i:batch_size * (i + 1)]
             batch_y = labels[batch_size * i:batch_size * (i + 1)]
@@ -94,12 +93,23 @@ with tf.Session() as sess:
             # Run optimization op (backprop)
             sess.run(optimizer, feed_dict={config.x: batch_x, config.y: batch_y})
 
-            if i % display_step == 0:
-                # Calculate batch accuracy
-                acc = sess.run(accuracy, feed_dict={config.x: batch_x, config.y: batch_y})
-                # Calculate batch loss
-                loss = sess.run(cost, feed_dict={config.x: batch_x, config.y: batch_y})
-                print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
-                      "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                      "{:.5f}".format(acc))
+            #if i % display_step == 0:
+            # Calculate batch accuracy
+            acc,loss = sess.run([accuracy,cost], feed_dict={config.x: batch_x, config.y: batch_y})
+            # Calculate batch loss
+            #loss = sess.run(cost, feed_dict={config.x: batch_x, config.y: batch_y})
+            print("Iter " + str(i * batch_size) + ", Minibatch Loss= " + \
+                  "{:.6f}".format(loss) + ", Training Accuracy= " + \
+                  "{:.5f}".format(acc))
     print("Optimization Finished!")
+
+    #Test accuracy
+    test=np.load("../cb513+profile_split1.npy.gz")
+    test.shape=(514,700,57)
+    labels = test[:,:,22:31]
+    a = np.arange(0,21)
+    b = np.arange(35,56)
+    c = np.hstack((a,b))
+    X = test[:,:,c]
+    acc=sess.run(accuracy,feed_dict={config.x:X, config.y:labels})
+    print("test accuracy = "+str(acc))

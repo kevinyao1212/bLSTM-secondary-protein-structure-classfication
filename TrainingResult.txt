@@ -1,0 +1,172 @@
+0
+Iter 0, Minibatch Loss= 103.490532, Training Accuracy= 0.67491
+1
+Iter 64, Minibatch Loss= 188.451828, Training Accuracy= 0.11420
+2
+Iter 128, Minibatch Loss= 104.234261, Training Accuracy= 0.68286
+3
+Iter 192, Minibatch Loss= 75.359459, Training Accuracy= 0.48982
+4
+Iter 256, Minibatch Loss= 74.016487, Training Accuracy= 0.67451
+5
+Iter 320, Minibatch Loss= 42.430809, Training Accuracy= 0.65871
+6
+Iter 384, Minibatch Loss= 28.235832, Training Accuracy= 0.73862
+7
+Iter 448, Minibatch Loss= 24.122072, Training Accuracy= 0.73335
+8
+Iter 512, Minibatch Loss= 23.536858, Training Accuracy= 0.73650
+9
+Iter 576, Minibatch Loss= 23.259447, Training Accuracy= 0.72835
+10
+Iter 640, Minibatch Loss= 23.094233, Training Accuracy= 0.72475
+11
+Iter 704, Minibatch Loss= 20.538530, Training Accuracy= 0.74100
+12
+Iter 768, Minibatch Loss= 18.766815, Training Accuracy= 0.76025
+13
+Iter 832, Minibatch Loss= 21.526644, Training Accuracy= 0.71636
+14
+Iter 896, Minibatch Loss= 22.107849, Training Accuracy= 0.71408
+15
+Iter 960, Minibatch Loss= 21.615475, Training Accuracy= 0.69147
+16
+Iter 1024, Minibatch Loss= 18.262049, Training Accuracy= 0.74406
+17
+Iter 1088, Minibatch Loss= 17.085566, Training Accuracy= 0.73748
+18
+Iter 1152, Minibatch Loss= 15.571126, Training Accuracy= 0.76520
+19
+Iter 1216, Minibatch Loss= 15.424531, Training Accuracy= 0.74754
+20
+Iter 1280, Minibatch Loss= 16.011196, Training Accuracy= 0.75230
+21
+Iter 1344, Minibatch Loss= 15.410383, Training Accuracy= 0.73379
+22
+Iter 1408, Minibatch Loss= 13.091804, Training Accuracy= 0.78763
+23
+Iter 1472, Minibatch Loss= 14.003361, Training Accuracy= 0.73759
+24
+Iter 1536, Minibatch Loss= 15.454479, Training Accuracy= 0.77931
+25
+Iter 1600, Minibatch Loss= 17.152481, Training Accuracy= 0.70033
+26
+Iter 1664, Minibatch Loss= 18.438101, Training Accuracy= 0.75636
+27
+Iter 1728, Minibatch Loss= 17.749355, Training Accuracy= 0.70565
+28
+Iter 1792, Minibatch Loss= 13.622661, Training Accuracy= 0.75696
+29
+Iter 1856, Minibatch Loss= 13.584304, Training Accuracy= 0.71525
+30
+Iter 1920, Minibatch Loss= 14.637673, Training Accuracy= 0.74763
+31
+Iter 1984, Minibatch Loss= 9.907339, Training Accuracy= 0.77004
+32
+Iter 2048, Minibatch Loss= 10.123064, Training Accuracy= 0.78522
+33
+Iter 2112, Minibatch Loss= 14.041699, Training Accuracy= 0.69987
+34
+Iter 2176, Minibatch Loss= 11.798903, Training Accuracy= 0.75074
+35
+Iter 2240, Minibatch Loss= 12.397220, Training Accuracy= 0.72301
+36
+Iter 2304, Minibatch Loss= 11.458419, Training Accuracy= 0.74174
+37
+Iter 2368, Minibatch Loss= 11.238482, Training Accuracy= 0.74645
+38
+Iter 2432, Minibatch Loss= 10.733088, Training Accuracy= 0.75297
+39
+Iter 2496, Minibatch Loss= 9.813451, Training Accuracy= 0.72980
+40
+Iter 2560, Minibatch Loss= 7.642159, Training Accuracy= 0.79475
+41
+Iter 2624, Minibatch Loss= 9.412811, Training Accuracy= 0.74290
+42
+Iter 2688, Minibatch Loss= 9.071626, Training Accuracy= 0.74616
+43
+Iter 2752, Minibatch Loss= 8.424072, Training Accuracy= 0.74931
+44
+Iter 2816, Minibatch Loss= 7.497438, Training Accuracy= 0.73712
+45
+Iter 2880, Minibatch Loss= 6.606956, Training Accuracy= 0.77362
+46
+Iter 2944, Minibatch Loss= 7.880275, Training Accuracy= 0.72031
+47
+Iter 3008, Minibatch Loss= 6.253211, Training Accuracy= 0.79212
+48
+Iter 3072, Minibatch Loss= 5.399017, Training Accuracy= 0.78217
+49
+Iter 3136, Minibatch Loss= 5.054061, Training Accuracy= 0.78842
+50
+Iter 3200, Minibatch Loss= 5.305039, Training Accuracy= 0.76886
+51
+Iter 3264, Minibatch Loss= 5.024025, Training Accuracy= 0.79176
+52
+Iter 3328, Minibatch Loss= 5.567181, Training Accuracy= 0.75319
+53
+Iter 3392, Minibatch Loss= 5.406387, Training Accuracy= 0.76562
+54
+Iter 3456, Minibatch Loss= 4.808256, Training Accuracy= 0.76654
+55
+Iter 3520, Minibatch Loss= 5.460393, Training Accuracy= 0.74900
+56
+Iter 3584, Minibatch Loss= 4.640885, Training Accuracy= 0.76368
+57
+Iter 3648, Minibatch Loss= 4.848080, Training Accuracy= 0.77442
+58
+Iter 3712, Minibatch Loss= 4.101124, Training Accuracy= 0.77379
+59
+Iter 3776, Minibatch Loss= 4.878513, Training Accuracy= 0.77962
+60
+Iter 3840, Minibatch Loss= 5.663083, Training Accuracy= 0.68335
+61
+Iter 3904, Minibatch Loss= 11.097454, Training Accuracy= 0.72027
+62
+Iter 3968, Minibatch Loss= 24.152140, Training Accuracy= 0.21783
+63
+Iter 4032, Minibatch Loss= 25.210648, Training Accuracy= 0.73176
+64
+Iter 4096, Minibatch Loss= 57.822636, Training Accuracy= 0.17750
+65
+Iter 4160, Minibatch Loss= 25.020323, Training Accuracy= 0.72154
+66
+Iter 4224, Minibatch Loss= 10.721111, Training Accuracy= 0.75406
+67
+Iter 4288, Minibatch Loss= 7.610538, Training Accuracy= 0.82254
+68
+Iter 4352, Minibatch Loss= 9.354136, Training Accuracy= 0.73536
+69
+Iter 4416, Minibatch Loss= 7.389007, Training Accuracy= 0.78542
+70
+Iter 4480, Minibatch Loss= 5.832761, Training Accuracy= 0.80214
+71
+Iter 4544, Minibatch Loss= 6.525043, Training Accuracy= 0.78080
+72
+Iter 4608, Minibatch Loss= 6.463213, Training Accuracy= 0.75248
+73
+Iter 4672, Minibatch Loss= 5.971766, Training Accuracy= 0.77438
+74
+Iter 4736, Minibatch Loss= 5.903951, Training Accuracy= 0.75056
+75
+Iter 4800, Minibatch Loss= 5.233002, Training Accuracy= 0.77955
+76
+Iter 4864, Minibatch Loss= 5.286237, Training Accuracy= 0.74279
+77
+Iter 4928, Minibatch Loss= 3.549517, Training Accuracy= 0.81717
+78
+Iter 4992, Minibatch Loss= 4.181692, Training Accuracy= 0.78060
+79
+Iter 5056, Minibatch Loss= 3.862379, Training Accuracy= 0.79467
+80
+Iter 5120, Minibatch Loss= 3.764469, Training Accuracy= 0.79232
+81
+Iter 5184, Minibatch Loss= 3.618841, Training Accuracy= 0.78694
+82
+Iter 5248, Minibatch Loss= 3.596700, Training Accuracy= 0.77382
+83
+Iter 5312, Minibatch Loss= 3.063442, Training Accuracy= 0.80569
+84
+Iter 5376, Minibatch Loss= 3.303951, Training Accuracy= 0.78192
+85
+Iter 5440, Minibatch Loss= 3.431299, Training Accuracy= 0.77355

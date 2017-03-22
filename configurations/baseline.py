@@ -8,14 +8,14 @@ start_saving_at = 0
 save_every = 20
 #write_every_batch = 10
 
-epochs = 400
+epochs = 1
 batch_size = 64
 N_L1 = 200
 N_LSTM_F = 400
 N_LSTM_B = 400
 N_L2 = 200
 n_inputs = 42
-n_classes = 8
+n_classes = 9
 seq_len = 700
 optimizer = "rmsprop"
 lambda_reg = 0.0001
