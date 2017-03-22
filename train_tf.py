@@ -117,7 +117,7 @@ with tf.Session() as sess:
     c = np.hstack((a,b))
     X = test[:,:,c]
     count=0
-    for i in range(514):
+    for i in range(512):
         for j in range(700):
             if (X[i,j,21]==1):
                 count+=1
