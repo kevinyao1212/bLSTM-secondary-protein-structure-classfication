@@ -31,13 +31,10 @@ if len(sys.argv) != 2:
     sys.exit("Usage: python train.py <config_name>")
 
 config_name = sys.argv[1]
-test_name=config_name+"_test"
 
 #config_name = "lstm_uni_20"
 config = importlib.import_module("configurations.%s" % config_name)
-test=importlib.import_module("configurations.%s" % test_name)
 opt = config.optimizer
-print("Using configurations: '%s'" % config_name)
 
 timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 experiment_id = "%s-%s" % (config_name, timestamp)
@@ -87,8 +84,6 @@ with tf.Session() as sess:
     for epoch in range(config.epochs):
         total_batch = int(len(X) / batch_size)
         for i in range(total_batch):
-            if (i==1):
-                break
             #### load data ####
             batch_x = X[batch_size * i:batch_size * (i + 1)]
             batch_y = labels[batch_size * i:batch_size * (i + 1)]
@@ -110,19 +105,10 @@ with tf.Session() as sess:
 
 
     #Test accuracy
-    l_out = test.build_model(test.x,test.weights,test.biases)
-
-    # Define loss and optimizer
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=l_out, labels=test.y))
-
-    # Evaluate model
-    correct_pred = tf.equal(tf.argmax(l_out, 2), tf.argmax(test.y, 2))
-    accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-
     f=gzip.open('../cb513+profile_split1.npy.gz','rb')
     test=np.load(f)
     test.shape=(514,700,57)
-    labels = test[:,:,22:30]
+    labels = test[:,:,22:31]
     a = np.arange(0,22)
     b = np.arange(35,56)
     c = np.hstack((a,b))
@@ -134,11 +120,23 @@ with tf.Session() as sess:
                 count+=1
     print(count)
     acc = 0
-    for i in range(int(514/test.batch_size)):
+    for i in range(int(514/config.batch_size)):
         batch_x = X[batch_size * i:batch_size * (i + 1)]
         batch_y = labels[batch_size * i:batch_size * (i + 1)]
-        acc+=sess.run(accuracy,feed_dict={test.x:batch_x, test.y:batch_y})
+        prediction=tf.argmax(l_out,2)
+        res=prediction.eval(feed_dict={config.x:batch_x, config.y:batch_y})
+        #best=sess.run([prediction],)
+        print(res.shape)
+        for j in range(config.batch_size):
+            for k in range(config.seq_len):
+                if (batch_y[j,k,8]==1):
+                    continue
+                if (np.argmax(batch_y[j,k,:])==res[j,k]):
+                    acc+=1
+        #acc+=sess.run(accuracy,feed_dict={config.x:batch_x, config.y:batch_y})
         #acc=accuracy.eval({config.x:X, config.y:labels})
-    acc/=int(514/test.batch_size)
-    acc=(514*700*acc)/(514*700-count)
+    #acc/=int(514/config.batch_size)
+
+    print(acc)
+    acc=acc/(514*700-count)
     print("test accuracy = "+str(acc))
