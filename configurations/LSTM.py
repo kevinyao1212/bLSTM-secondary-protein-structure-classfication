@@ -2,24 +2,16 @@ import tensorflow as tf
 from tensorflow.contrib import rnn
 import numpy as np
 
-
-#validate_every = 40
-start_saving_at = 0
-save_every = 20
-#write_every_batch = 10
-
-epochs = 1
+epochs = 50
 batch_size = 64
 N_L1 = 200
-N_LSTM_F = 400
+N_LSTM_F = 250
 #N_LSTM_B = 400
 N_L2 = 200
 n_inputs = 43
 n_classes = 9
 seq_len = 700
 optimizer = "rmsprop"
-lambda_reg = 0.0001
-cut_grad = 20
 
 # tf Graph input
 x = tf.placeholder("float", [None, seq_len, n_inputs])

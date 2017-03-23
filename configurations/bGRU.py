@@ -8,11 +8,11 @@ start_saving_at = 0
 save_every = 20
 #write_every_batch = 10
 
-epochs = 1
+epochs = 50
 batch_size = 64
 N_L1 = 200
-N_GRU_F = 400
-N_GRU_B = 400
+N_GRU_F = 250
+N_GRU_B = 250
 N_L2 = 200
 n_inputs = 43
 n_classes = 9
