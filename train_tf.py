@@ -23,7 +23,7 @@ b = np.arange(35,56)
 c = np.hstack((a,b))
 X = X[:,:,c]
 
-learning_rate = 0.001
+learning_rate = 0.01
 display_step = 50
 
 np.random.seed(1)
