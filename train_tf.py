@@ -9,8 +9,9 @@ import pickle
 import gzip
 from tempfile import TemporaryFile
 
-f=gzip.open('../cullpdb+profile_6133_filtered.npy.gz','rb')
-X_in=np.load(f)
+#f=gzip.open('cullpdb+profile_6133_filtered.npy.gz','rb')
+#print(f)
+X_in=np.load('cullpdb+profile_6133_filtered.npy.gz')
 
 X = np.reshape(X_in,(5534,700,57))
 del X_in
@@ -23,7 +24,7 @@ b = np.arange(35,56)
 c = np.hstack((a,b))
 X = X[:,:,c]
 
-learning_rate = 0.01
+learning_rate = 0.001
 display_step = 50
 
 np.random.seed(1)
@@ -64,17 +65,15 @@ init = tf.global_variables_initializer()
 
 if opt == "rmsprop":
     optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)
-# elif optimizer == "adadelta":
-#
-# elif optimizer == "adagrad":
-#
-# elif optimizer == "nag":
-
+elif opt == "adadelta":
+    optimizer = tf.train.AdadeltaOptimizer(learning_rate=learning_rate).minimize(cost)
+elif opt == "adagrad":
+    optimizer = tf.train.AdagradOptimizer(learning_rate=learning_rate).minimize(cost)
 else:
     sys.exit("please choose either <rmsprop/adagrad/adadelta/nag> in configfile")
 
-f=gzip.open('../cb513+profile_split1.npy.gz','rb')
-test=np.load(f)
+#f=gzip.open('../cb513+profile_split1.npy.gz','rb')
+test=np.load('cb513+profile_split1.npy.gz')
 test.shape=(514,700,57)
 labelsTest = test[:,:,22:31]
 a = np.arange(0,22)
@@ -97,6 +96,11 @@ with tf.Session() as sess:
 
     for epoch in range(config.epochs):
         total_batch = int(len(X) / batch_size)
+
+        if config_name == "multi_bLSTM":
+            _fw_current_state = np.zeros((config.num_layers, 2, config.batch_size, config.N_LSTM_F))
+            _bw_current_state = np.zeros((config.num_layers, 2, config.batch_size, config.N_LSTM_B))
+
         for i in range(total_batch):
             #### load data ####
             batch_x = X[batch_size * i:batch_size * (i + 1)]
@@ -104,7 +108,17 @@ with tf.Session() as sess:
             # Reshape data to get 28 seq of 28 elements
             # batch_x = batch_x.reshape((batch_size, n_steps, n_input))
             # Run optimization op (backprop)
-            _,loss=sess.run([optimizer,cost], feed_dict={config.x: batch_x, config.y: batch_y})
+
+            if config_name != "multi_bLSTM":
+                _,loss=sess.run([optimizer,cost], feed_dict={config.x: batch_x, config.y: batch_y})
+            else:
+                _, loss, _fw_current_state, _bw_current_state  = sess.run(
+                [optimizer, cost, config.fw_state, config.bw_state], 
+                feed_dict={
+                    config.x: batch_x, 
+                    config.y: batch_y,
+                    config.fw_state: _fw_current_state,
+                    config.bw_state: _bw_current_state})
 
             #if i % display_step == 0:
             # Calculate batch accuracy
@@ -120,7 +134,12 @@ with tf.Session() as sess:
             batch_x = XTest[batch_size * i:batch_size * (i + 1)]
             batch_y = labelsTest[batch_size * i:batch_size * (i + 1)]
             prediction=tf.argmax(l_out,2)
-            res=prediction.eval(feed_dict={config.x:batch_x, config.y:batch_y})
+            if config_name == "multi_bLSTM":
+                res=prediction.eval(feed_dict={config.x:batch_x, config.y:batch_y, config.fw_state: _fw_current_state,
+                        config.bw_state: _bw_current_state})
+            else:
+                res=prediction.eval(feed_dict={config.x:batch_x, config.y:batch_y})
+                
             for j in range(config.batch_size):
                 for k in range(config.seq_len):
                     if (batch_y[j,k,8]==1):
