@@ -1,0 +1,12 @@
+model: blstm
+epochs = 5
+batch_size = 64
+N_L1 = 200
+N_LSTM_F = 250
+N_LSTM_B = 250
+N_L2 = 200
+n_inputs = 43
+n_classes = 9
+seq_len = 700
+optimizer = "rmsprop"
+learning rate=0.005
