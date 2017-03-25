@@ -1,0 +1,14 @@
+multi_bLSTM
+epochs = 400
+batch_size = 64
+N_L1 = 128
+N_LSTM_F = 100
+N_LSTM_B = 100
+N_L2 = 128
+n_inputs = 43
+n_classes = 9
+seq_len = 700
+num_layers = 2
+optimizer = "rmsprop"
+
+no drop out
