@@ -39,34 +39,38 @@ biases = {
 
 
 def build_model(x, weights, biases):
-    x = tf.transpose(x, [0, 2, 1])
-    x = tf.reshape(x, [-1, seq_len, 1])
+    #input_layer = tf.transpose(x, [0, 2, 1])
+    #x = tf.reshape(x, [-1, seq_len, 1])
 
     y_conv_1 = tf.layers.conv1d(x, N_CONV_A, F_CONV_A, padding='same', 
                                 activation=tf.nn.relu)
 
     batch_conv_1 = tf.layers.batch_normalization(y_conv_1)
 
-    #batch_conv_1 = tf.transpose(batch_conv_1, [0,2,1,3])
+    #batch_flat = tf.reshape(batch_conv_1,[-1, n_inputs*N_CONV_A])
 
-    batch_flat = tf.reshape(batch_conv_1,[-1, n_inputs*N_CONV_A])
+    y_conv_2 = tf.layers.conv1d(x, N_CONV_B, F_CONV_B, padding='same', 
+                                activation=tf.nn.relu)
 
-    # y_conv_2 = tf.layers.conv1d(x, N_CONV_B, F_CONV_B, padding='same', activation=tf.nn.relu)
+    batch_conv_2 = tf.layers.batch_normalization(y_conv_2)
 
-    # batch_conv_2 = tf.layers.batch_normalization(y_conv_2)
+    y_conv_3 = tf.layers.conv1d(x, N_CONV_C, F_CONV_C, padding='same', 
+                                activation=tf.nn.relu)
 
-    # y_conv_3 = tf.layers.conv1d(x, N_CONV_C, F_CONV_C, padding='same', activation=tf.nn.relu)
+    batch_conv_3 = tf.layers.batch_normalization(y_conv_3)
 
-    # batch_conv_3 = tf.layers.batch_normalization(y_conv_3)
+    concat_layer_1 = tf.concat([batch_conv_1, batch_conv_2, batch_conv_3], 2)
+    #concat_layer_1 = tf.transpose(concat_layer_1, [0, 2, 1])
 
-    # concat_layer = tf.concat([batch_conv_1, batch_conv_2, batch_conv_3], 1)
-    # concat_layer = tf.transpose(concat_layer, [0, 2, 1])
+    concat_layer_2 = tf.concat([x, concat_layer_1], 2)
 
-    layer_1 = tf.add(tf.matmul(batch_flat, weights['h1']), biases['b1'])
-    layer_1 = tf.nn.relu(layer_1)
+    reshape_layer_1 = tf.reshape(concat_layer_2, [batch_size*seq_len, n_inputs+48])
 
-    #layer_1=tf.reshape(layer_1,[batch_size,seq_len,N_L1])
-    layer_1=tf.split(layer_1,seq_len,0)
+    dense_layer_1 = tf.layers.dense(reshape_layer_1, N_L1, activation=tf.nn.relu, use_bias=True)
+    
+    batch_dense_1 = tf.layers.batch_normalization(dense_layer_1)
+    
+    layer_1=tf.split(batch_dense_1,seq_len,0)
     lstm_forward = rnn.BasicLSTMCell(N_LSTM_F)
     lstm_backward = rnn.BasicLSTMCell(N_LSTM_B)
 
@@ -79,10 +83,9 @@ def build_model(x, weights, biases):
     lstm_output=tf.reshape(lstm_output,[batch_size*seq_len,2*N_LSTM_F])
     layer_2 = tf.nn.dropout(lstm_output, keep_prob = 0.5)
 
-    layer_2 = tf.add(tf.matmul(layer_2, weights['h2']), biases['b2'])
-    layer_2 = tf.nn.relu(layer_2)
+    dense_layer_2 = tf.layers.dense(layer_2, N_L2, activation=tf.nn.relu, use_bias=True)
 
-    output_layer = tf.add(tf.matmul(layer_2, weights['out']), biases['out'])
+    output_layer = tf.add(tf.matmul(dense_layer_2, weights['out']), biases['out'])
     output_layer=tf.reshape(output_layer,[batch_size,seq_len,n_classes])
 
     return output_layer

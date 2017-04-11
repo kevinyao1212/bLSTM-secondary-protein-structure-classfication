@@ -36,6 +36,7 @@ def build_model(x, weights, biases):
     layer_1 = tf.nn.relu(layer_1)
 
     #layer_1=tf.reshape(layer_1,[batch_size,seq_len,N_L1])
+    # for tensorflow LSTM input
     layer_1=tf.split(layer_1,seq_len,0)
     lstm_forward = rnn.BasicLSTMCell(N_LSTM_F)
     lstm_backward = rnn.BasicLSTMCell(N_LSTM_B)
@@ -43,6 +44,7 @@ def build_model(x, weights, biases):
     #state = tf.zeros([batch_size, lstm_forward.state_size])
 
     #lstm_output, state = lstm_forward(layer_1, state)
+    # running lstm using tensorflow built-in function
     lstm_output, _, _ = rnn.static_bidirectional_rnn(lstm_forward, lstm_backward, 
             layer_1, dtype=tf.float32)
 
